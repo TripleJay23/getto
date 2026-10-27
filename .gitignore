@@ -1,0 +1,113 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Widget Preview related
+.widget_preview/
+
+# Environment secrets (sanitized examples remain publishable)
+.env
+.env.*
+!.env.example
+
+# Signing configuration and private keys
+key.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pkcs12
+*.pem
+*.key
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+
+# Private service-account and credential material
+service-account*.json
+service_account*.json
+*-service-account.json
+*-service_account.json
+credentials.json
+credentials.*.json
+secrets.json
+secrets.*.json
+.credentials/
+.secrets/
+
+# Local household databases and SQLite sidecars
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.sqlite3-journal
+*.db-wal
+*.db-shm
+*.db-journal
+
+# Generated distribution packages and local review exports
+*.apk
+*.aab
+*.apks
+*.ipa
+GETTO_*_REVIEW*.zip
+
+# Local specifications and project documentation (kept local)
+/AGENTS.md
+/ARCHITECTURE.md
+/CHANGELOG.md
+/DECISIONS.md
+/DESIGN_SYSTEM.md
+/PRD.md
+/ROADMAP.md
+/SECURITY.md
+/TESTING.md
+/UX.md
+/docs/

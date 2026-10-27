@@ -1,0 +1,503 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": false
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "areas",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "PRIMARY KEY AUTOINCREMENT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "auto-increment"
+            ]
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 50
+                }
+              }
+            ]
+          },
+          {
+            "name": "icon_name",
+            "getter_name": "iconName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'general\\'')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 50
+                }
+              }
+            ]
+          },
+          {
+            "name": "display_order",
+            "getter_name": "displayOrder",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "displayOrder",
+                        "tag": "displayOrder"
+                      },
+                      ").isBiggerOrEqual(const ",
+                      {
+                        "lexeme": "Constant",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(0))"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "is_archived",
+            "getter_name": "isArchived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_system",
+            "getter_name": "isSystem",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_system\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_system\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('CAST(strftime(\\'%s\\', CURRENT_TIMESTAMP) AS INTEGER)')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('CAST(strftime(\\'%s\\', CURRENT_TIMESTAMP) AS INTEGER)')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 1,
+      "references": [
+        0
+      ],
+      "type": "table",
+      "data": {
+        "name": "items",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "PRIMARY KEY AUTOINCREMENT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "auto-increment"
+            ]
+          },
+          {
+            "name": "area_id",
+            "getter_name": "areaId",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES areas (id) ON UPDATE CASCADE ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES areas (id) ON UPDATE CASCADE ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "areas",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": "cascade",
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 100
+                }
+              }
+            ]
+          },
+          {
+            "name": "behavior_profile",
+            "getter_name": "behaviorProfile",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "behaviorProfile",
+                        "tag": "behaviorProfile"
+                      },
+                      ".isIn(const ['replenishable','countableReplenishable','durable'])"
+                    ]
+                  }
+                }
+              }
+            ],
+            "type_converter": {
+              "dart_expr": "const BehaviorProfileConverter()",
+              "dart_type_name": "BehaviorProfile"
+            }
+          },
+          {
+            "name": "stock_status",
+            "getter_name": "stockStatus",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "stockStatus",
+                        "tag": "stockStatus"
+                      },
+                      ".isIn(const ['inStock','outOfStock'])"
+                    ]
+                  }
+                }
+              }
+            ],
+            "type_converter": {
+              "dart_expr": "const StockStatusConverter()",
+              "dart_type_name": "StockStatus"
+            }
+          },
+          {
+            "name": "unit",
+            "getter_name": "unit",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 1,
+                  "max": 20
+                }
+              }
+            ]
+          },
+          {
+            "name": "package_count",
+            "getter_name": "packageCount",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "check": {
+                  "dart_expression": {
+                    "elements": [
+                      {
+                        "lexeme": "packageCount",
+                        "tag": "packageCount"
+                      },
+                      ".isNull() | ",
+                      {
+                        "lexeme": "ComparableExpr",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(",
+                      {
+                        "lexeme": "packageCount",
+                        "tag": "packageCount"
+                      },
+                      ").isBiggerOrEqual(const ",
+                      {
+                        "lexeme": "Constant",
+                        "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+                      },
+                      "(0))"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "is_archived",
+            "getter_name": "isArchived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "notes",
+            "getter_name": "notes",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('CAST(strftime(\\'%s\\', CURRENT_TIMESTAMP) AS INTEGER)')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('CAST(strftime(\\'%s\\', CURRENT_TIMESTAMP) AS INTEGER)')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (package_count IS NULL OR (package_count > 0 AND stock_status = 'inStock') OR (package_count = 0 AND stock_status = 'outOfStock'))",
+          "CHECK (behavior_profile != 'durable' OR package_count IS NULL)"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "idx_areas_name_active",
+        "sql": "CREATE UNIQUE INDEX idx_areas_name_active ON areas(LOWER(name)) WHERE is_archived = 0",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 3,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "idx_areas_order",
+        "sql": "CREATE INDEX idx_areas_order ON areas(display_order) WHERE is_archived = 0",
+        "unique": false,
+        "columns": []
+      }
+    },
+    {
+      "id": 4,
+      "references": [
+        1
+      ],
+      "type": "index",
+      "data": {
+        "on": 1,
+        "name": "idx_items_area",
+        "sql": "CREATE INDEX idx_items_area ON items(area_id, is_archived)",
+        "unique": false,
+        "columns": []
+      }
+    },
+    {
+      "id": 5,
+      "references": [
+        1
+      ],
+      "type": "index",
+      "data": {
+        "on": 1,
+        "name": "idx_items_status",
+        "sql": "CREATE INDEX idx_items_status ON items(stock_status, is_archived)",
+        "unique": false,
+        "columns": []
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "areas",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"areas\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"name\" TEXT NOT NULL, \"icon_name\" TEXT NOT NULL DEFAULT 'general', \"display_order\" INTEGER NOT NULL DEFAULT 0 CHECK(\"display_order\" >= 0), \"is_archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_archived\" IN (0, 1)), \"is_system\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_system\" IN (0, 1)), \"created_at\" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)), \"updated_at\" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)));"
+        }
+      ]
+    },
+    {
+      "name": "items",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"items\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"area_id\" INTEGER NOT NULL REFERENCES areas (id) ON UPDATE CASCADE ON DELETE RESTRICT, \"name\" TEXT NOT NULL, \"behavior_profile\" TEXT NOT NULL CHECK(\"behavior_profile\" IN ('replenishable', 'countableReplenishable', 'durable')), \"stock_status\" TEXT NOT NULL CHECK(\"stock_status\" IN ('inStock', 'outOfStock')), \"unit\" TEXT NULL, \"package_count\" INTEGER NULL CHECK(\"package_count\" IS NULL OR \"package_count\" >= 0), \"is_archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_archived\" IN (0, 1)), \"notes\" TEXT NULL, \"created_at\" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)), \"updated_at\" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)), CHECK (package_count IS NULL OR (package_count > 0 AND stock_status = 'inStock') OR (package_count = 0 AND stock_status = 'outOfStock')), CHECK (behavior_profile != 'durable' OR package_count IS NULL));"
+        }
+      ]
+    },
+    {
+      "name": "idx_areas_name_active",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX idx_areas_name_active ON areas (LOWER(name)) WHERE is_archived = 0"
+        }
+      ]
+    },
+    {
+      "name": "idx_areas_order",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX idx_areas_order ON areas (display_order) WHERE is_archived = 0"
+        }
+      ]
+    },
+    {
+      "name": "idx_items_area",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX idx_items_area ON items (area_id, is_archived)"
+        }
+      ]
+    },
+    {
+      "name": "idx_items_status",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX idx_items_status ON items (stock_status, is_archived)"
+        }
+      ]
+    }
+  ]
+}

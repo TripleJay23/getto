@@ -1,0 +1,276 @@
+{
+  "source": "Exact assets returned by live Figma get_design_context",
+  "date": "2026-10-13",
+  "assets": [
+    {
+      "file": "badge-learning.svg",
+      "nodeId": "87:3",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 556,
+      "sha256": "794106adc2bd7a4da6b07de8555a725cad4b7a1e51bf1d14546f34ece09ad1fa",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-early-estimate.svg",
+      "nodeId": "87:8",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 516,
+      "sha256": "4707c81ff8a051a691efb83554bac2d01615345b8da85e4471a01d57cb5a11e0",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-established.svg",
+      "nodeId": "87:13",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 518,
+      "sha256": "53fa7f0a5dc22a08ee962de1b7e83e3b57bf7a5296a1a7c086d69f007e63ab21",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-attention-check-needed.svg",
+      "nodeId": "87:18",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 404,
+      "sha256": "85d8fa5c0c290e89751da54c657cc7a64ab5a89ee25ab67df60c6976b49186f6",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-expiring.svg",
+      "nodeId": "87:28",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 516,
+      "sha256": "13816d7f90cb19d562409561a0a5df132b6065573f9a6983fd1c685dc5e04615",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-expired-overdue.svg",
+      "nodeId": "87:33",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 404,
+      "sha256": "5e39c87c80c6ec9d9379cf22b583c7821d06e1a079492386822cd47367a8abe0",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-acquired.svg",
+      "nodeId": "87:43",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 326,
+      "sha256": "3021babd7cf83644d5bb543967b1aabc057eaf550a32562b5feac4f48506e46d",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-ready-to-restock.svg",
+      "nodeId": "87:47",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 791,
+      "sha256": "34156f5f6cd1a987cee58d7bbad54f5ca2d0a5db8a54e5dfaaa9bd7d3e106b82",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-upcoming.svg",
+      "nodeId": "87:52",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 427,
+      "sha256": "42eeedd36dac3e5bad406c7be0816c897ec65e664368c8287c10a276c820a394",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-due-today.svg",
+      "nodeId": "87:57",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 516,
+      "sha256": "4707c81ff8a051a691efb83554bac2d01615345b8da85e4471a01d57cb5a11e0",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-paid.svg",
+      "nodeId": "87:67",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 326,
+      "sha256": "0ce362eb01a5e68cee37b1d04b7c7de6374ea2ad7f9ebb2c56721bff86aa78bd",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-in-use.svg",
+      "nodeId": "88:3",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 537,
+      "sha256": "8d73e72c58d759e42b335130f05caa7d9dc28b8732a4449bc041e4f0b642db9f",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "badge-in-home.svg",
+      "nodeId": "88:13",
+      "master": "87:70",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 321,
+      "sha256": "62bc390374d63846ffa0811d96d98ad49ff46a48bff6fecd0b59d8a64361351b",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "item-row-in-use.svg",
+      "nodeId": "I89:2;88:3",
+      "master": "60:30",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 537,
+      "sha256": "8d73e72c58d759e42b335130f05caa7d9dc28b8732a4449bc041e4f0b642db9f",
+      "root": {
+        "width": "16",
+        "height": "16",
+        "viewBox": "0 0 16 16",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "count-decrease.svg",
+      "nodeId": "93:135",
+      "master": "59:76",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 293,
+      "sha256": "a8bede4581b715e7b6b3e89486d50b56cc8d80456ee533ac4b007adb89c3580e",
+      "root": {
+        "width": "24",
+        "height": "24",
+        "viewBox": "0 0 24 24",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "count-increase.svg",
+      "nodeId": "93:137",
+      "master": "59:76",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 301,
+      "sha256": "58063226a3beb08282c09e84b3eb4a8b6064c48222eac6c2d75a83da03b10aad",
+      "root": {
+        "width": "24",
+        "height": "24",
+        "viewBox": "0 0 24 24",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "area-chevron.svg",
+      "nodeId": "119:144",
+      "master": "119:154",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 334,
+      "sha256": "3883f818cbbfb97ee15601b908f9de497db43aefcc47b118b5d5136acb4f3392",
+      "root": {
+        "width": "18",
+        "height": "18",
+        "viewBox": "0 0 18 18",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    },
+    {
+      "file": "empty-search.svg",
+      "nodeId": "93:149",
+      "master": "61:109",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "bytes": 473,
+      "sha256": "3aff1251bbebcf46f5daa483bacba9c79de1fc8239fc45450e11933c4cd2c96b",
+      "root": {
+        "width": "40",
+        "height": "40",
+        "viewBox": "0 0 40 40",
+        "fill": "none",
+        "xmlns": "http://www.w3.org/2000/svg"
+      }
+    }
+  ]
+}

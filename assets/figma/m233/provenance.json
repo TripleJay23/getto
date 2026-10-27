@@ -1,0 +1,26 @@
+{
+  "source": "Unmodified original SVG downloads from live Figma design context",
+  "date": "2026-10-15",
+  "assets": [
+    {
+      "file": "back.svg",
+      "nodeId": "I120:1534;79:499",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "designWidth": 24,
+      "designHeight": 24,
+      "bytes": 321,
+      "sha256": "fe44dcc676dcc85ada25afc62d273a507fd260c93255dd5963dab25cec94ac8c",
+      "usage": "Item child navigation, 24dp inside a 48dp target"
+    },
+    {
+      "file": "delete.svg",
+      "nodeId": "875:106",
+      "fileKey": "UX8KYGR1iXlc1Xrvlrzxqm",
+      "designWidth": 24,
+      "designHeight": 24,
+      "bytes": 354,
+      "sha256": "123e736aaa377482661f0fba24811d97d05561fa43399ebe08e1671dc383e32c",
+      "usage": "Permanent delete dialog, 24dp inside the centered 48dp tile"
+    }
+  ]
+}
