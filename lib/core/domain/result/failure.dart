@@ -100,3 +100,37 @@ class DatabaseCorruptionFailure extends DataFailure {
 class UnexpectedDataFailure extends DataFailure {
   const UnexpectedDataFailure(super.message, [super.cause]);
 }
+
+/// Pure lifecycle transition failures; no persistence or UI dependencies.
+sealed class LifecycleFailure extends DomainFailure {
+  const LifecycleFailure(super.message);
+}
+
+class InvalidLifecycleDateFailure extends LifecycleFailure {
+  const InvalidLifecycleDateFailure(super.message);
+}
+
+class LifecycleProfileFailure extends LifecycleFailure {
+  const LifecycleProfileFailure(super.message);
+}
+
+class LifecycleCountFailure extends LifecycleFailure {
+  const LifecycleCountFailure(super.message);
+}
+
+class LifecycleTargetFailure extends LifecycleFailure {
+  const LifecycleTargetFailure(super.message);
+}
+
+class LifecycleConflictFailure extends LifecycleFailure {
+  const LifecycleConflictFailure(super.message, {this.cycleId});
+  final int? cycleId;
+}
+
+class LifecycleCheckpointReconciliationFailure extends LifecycleFailure {
+  LifecycleCheckpointReconciliationFailure(Iterable<int> checkpointIds)
+    : checkpointIds = List.unmodifiable(checkpointIds),
+      super('Explicitly reconcile observations outside the corrected cycle.');
+
+  final List<int> checkpointIds;
+}
