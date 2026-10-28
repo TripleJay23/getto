@@ -431,7 +431,7 @@ void main() {
       );
       expect((await repository.restoreArea(2)).valueOrNull!.displayOrder, 1);
       expect((await repository.getAreaById(3)).isFailure, isTrue);
-      expect(disk.schemaVersion, 1);
+      expect(disk.schemaVersion, 2);
       expect(
         await disk.customSelect('PRAGMA foreign_key_check').get(),
         isEmpty,

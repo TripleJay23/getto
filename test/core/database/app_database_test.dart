@@ -17,14 +17,14 @@ void main() {
     await db.close();
   });
 
-  group('AppDatabase Foundation & Schema v1', () {
+  group('AppDatabase Foundation & Schema v2', () {
     test('enforces foreign keys pragma on open', () async {
       final result = await db.customSelect('PRAGMA foreign_keys;').getSingle();
       expect(result.data['foreign_keys'], 1);
     });
 
     test(
-      'initializes schema v1 and seeds default 4 areas on first creation',
+      'initializes schema v2 and seeds default 4 areas on first creation',
       () async {
         final areas = await db.select(db.areasTable).get();
         expect(areas.length, 4);

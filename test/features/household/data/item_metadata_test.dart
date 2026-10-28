@@ -290,7 +290,7 @@ void main() {
     expect(restored.areaId, 2);
     expect(restored.id, before.id);
   });
-  test('file restart retains edited, corrected, archived/restored and deleted states at schema v1', () async {
+  test('file restart retains edited, corrected, archived/restored and deleted states at schema v2', () async {
     await db.close();
     final directory = await Directory.systemTemp.createTemp('getto_m233_');
     final file = File('${directory.path}/test.sqlite');
@@ -329,7 +329,7 @@ void main() {
       expect(saved.stockStatus, StockStatus.outOfStock);
       expect(saved.isArchived, isTrue);
       expect((await repo.getItemById(deleted.id)).isFailure, isTrue);
-      expect(fileDb.schemaVersion, 1);
+      expect(fileDb.schemaVersion, 2);
       expect(
         (await fileDb.customSelect('PRAGMA foreign_key_check').get()),
         isEmpty,

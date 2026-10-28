@@ -1184,11 +1184,651 @@ class ItemsTableCompanion extends UpdateCompanion<ItemData> {
   }
 }
 
+class $LifecycleCyclesTableTable extends LifecycleCyclesTable
+    with TableInfo<$LifecycleCyclesTableTable, LifecycleCycleData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LifecycleCyclesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<int> itemId = GeneratedColumn<int>(
+    'item_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES items (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalDate, String> startedOn =
+      GeneratedColumn<String>(
+        'started_on',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<LocalDate>(
+        $LifecycleCyclesTableTable.$converterstartedOn,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalDate?, String> finishedOn =
+      GeneratedColumn<String>(
+        'finished_on',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<LocalDate?>(
+        $LifecycleCyclesTableTable.$converterfinishedOnn,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, itemId, startedOn, finishedOn];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lifecycle_cycles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LifecycleCycleData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LifecycleCycleData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LifecycleCycleData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}item_id'],
+      )!,
+      startedOn: $LifecycleCyclesTableTable.$converterstartedOn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}started_on'],
+        )!,
+      ),
+      finishedOn: $LifecycleCyclesTableTable.$converterfinishedOnn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}finished_on'],
+        ),
+      ),
+    );
+  }
+
+  @override
+  $LifecycleCyclesTableTable createAlias(String alias) {
+    return $LifecycleCyclesTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<LocalDate, String> $converterstartedOn =
+      const LocalDateConverter();
+  static TypeConverter<LocalDate, String> $converterfinishedOn =
+      const LocalDateConverter();
+  static TypeConverter<LocalDate?, String?> $converterfinishedOnn =
+      NullAwareTypeConverter.wrap($converterfinishedOn);
+}
+
+class LifecycleCycleData extends DataClass
+    implements Insertable<LifecycleCycleData> {
+  final int id;
+  final int itemId;
+  final LocalDate startedOn;
+  final LocalDate? finishedOn;
+  const LifecycleCycleData({
+    required this.id,
+    required this.itemId,
+    required this.startedOn,
+    this.finishedOn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['item_id'] = Variable<int>(itemId);
+    {
+      map['started_on'] = Variable<String>(
+        $LifecycleCyclesTableTable.$converterstartedOn.toSql(startedOn),
+      );
+    }
+    if (!nullToAbsent || finishedOn != null) {
+      map['finished_on'] = Variable<String>(
+        $LifecycleCyclesTableTable.$converterfinishedOnn.toSql(finishedOn),
+      );
+    }
+    return map;
+  }
+
+  LifecycleCyclesTableCompanion toCompanion(bool nullToAbsent) {
+    return LifecycleCyclesTableCompanion(
+      id: Value(id),
+      itemId: Value(itemId),
+      startedOn: Value(startedOn),
+      finishedOn: finishedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finishedOn),
+    );
+  }
+
+  factory LifecycleCycleData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LifecycleCycleData(
+      id: serializer.fromJson<int>(json['id']),
+      itemId: serializer.fromJson<int>(json['itemId']),
+      startedOn: serializer.fromJson<LocalDate>(json['startedOn']),
+      finishedOn: serializer.fromJson<LocalDate?>(json['finishedOn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'itemId': serializer.toJson<int>(itemId),
+      'startedOn': serializer.toJson<LocalDate>(startedOn),
+      'finishedOn': serializer.toJson<LocalDate?>(finishedOn),
+    };
+  }
+
+  LifecycleCycleData copyWith({
+    int? id,
+    int? itemId,
+    LocalDate? startedOn,
+    Value<LocalDate?> finishedOn = const Value.absent(),
+  }) => LifecycleCycleData(
+    id: id ?? this.id,
+    itemId: itemId ?? this.itemId,
+    startedOn: startedOn ?? this.startedOn,
+    finishedOn: finishedOn.present ? finishedOn.value : this.finishedOn,
+  );
+  LifecycleCycleData copyWithCompanion(LifecycleCyclesTableCompanion data) {
+    return LifecycleCycleData(
+      id: data.id.present ? data.id.value : this.id,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      startedOn: data.startedOn.present ? data.startedOn.value : this.startedOn,
+      finishedOn: data.finishedOn.present
+          ? data.finishedOn.value
+          : this.finishedOn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LifecycleCycleData(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('finishedOn: $finishedOn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, itemId, startedOn, finishedOn);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LifecycleCycleData &&
+          other.id == this.id &&
+          other.itemId == this.itemId &&
+          other.startedOn == this.startedOn &&
+          other.finishedOn == this.finishedOn);
+}
+
+class LifecycleCyclesTableCompanion
+    extends UpdateCompanion<LifecycleCycleData> {
+  final Value<int> id;
+  final Value<int> itemId;
+  final Value<LocalDate> startedOn;
+  final Value<LocalDate?> finishedOn;
+  const LifecycleCyclesTableCompanion({
+    this.id = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.startedOn = const Value.absent(),
+    this.finishedOn = const Value.absent(),
+  });
+  LifecycleCyclesTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int itemId,
+    required LocalDate startedOn,
+    this.finishedOn = const Value.absent(),
+  }) : itemId = Value(itemId),
+       startedOn = Value(startedOn);
+  static Insertable<LifecycleCycleData> custom({
+    Expression<int>? id,
+    Expression<int>? itemId,
+    Expression<String>? startedOn,
+    Expression<String>? finishedOn,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (itemId != null) 'item_id': itemId,
+      if (startedOn != null) 'started_on': startedOn,
+      if (finishedOn != null) 'finished_on': finishedOn,
+    });
+  }
+
+  LifecycleCyclesTableCompanion copyWith({
+    Value<int>? id,
+    Value<int>? itemId,
+    Value<LocalDate>? startedOn,
+    Value<LocalDate?>? finishedOn,
+  }) {
+    return LifecycleCyclesTableCompanion(
+      id: id ?? this.id,
+      itemId: itemId ?? this.itemId,
+      startedOn: startedOn ?? this.startedOn,
+      finishedOn: finishedOn ?? this.finishedOn,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<int>(itemId.value);
+    }
+    if (startedOn.present) {
+      map['started_on'] = Variable<String>(
+        $LifecycleCyclesTableTable.$converterstartedOn.toSql(startedOn.value),
+      );
+    }
+    if (finishedOn.present) {
+      map['finished_on'] = Variable<String>(
+        $LifecycleCyclesTableTable.$converterfinishedOnn.toSql(
+          finishedOn.value,
+        ),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LifecycleCyclesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('startedOn: $startedOn, ')
+          ..write('finishedOn: $finishedOn')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LifecycleCheckpointsTableTable extends LifecycleCheckpointsTable
+    with TableInfo<$LifecycleCheckpointsTableTable, LifecycleCheckpointData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LifecycleCheckpointsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _cycleIdMeta = const VerificationMeta(
+    'cycleId',
+  );
+  @override
+  late final GeneratedColumn<int> cycleId = GeneratedColumn<int>(
+    'cycle_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES lifecycle_cycles (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LifecycleCheckpointKind, String>
+  kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        check: () => kind.isIn(const ['aboutHalf', 'nearlyFinished']),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<LifecycleCheckpointKind>(
+        $LifecycleCheckpointsTableTable.$converterkind,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalDate, String> observedOn =
+      GeneratedColumn<String>(
+        'observed_on',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<LocalDate>(
+        $LifecycleCheckpointsTableTable.$converterobservedOn,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, cycleId, kind, observedOn];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lifecycle_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LifecycleCheckpointData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('cycle_id')) {
+      context.handle(
+        _cycleIdMeta,
+        cycleId.isAcceptableOrUnknown(data['cycle_id']!, _cycleIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cycleIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LifecycleCheckpointData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LifecycleCheckpointData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      cycleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cycle_id'],
+      )!,
+      kind: $LifecycleCheckpointsTableTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      observedOn: $LifecycleCheckpointsTableTable.$converterobservedOn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}observed_on'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $LifecycleCheckpointsTableTable createAlias(String alias) {
+    return $LifecycleCheckpointsTableTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<LifecycleCheckpointKind, String> $converterkind =
+      const LifecycleCheckpointKindConverter();
+  static TypeConverter<LocalDate, String> $converterobservedOn =
+      const LocalDateConverter();
+}
+
+class LifecycleCheckpointData extends DataClass
+    implements Insertable<LifecycleCheckpointData> {
+  final int id;
+  final int cycleId;
+  final LifecycleCheckpointKind kind;
+  final LocalDate observedOn;
+  const LifecycleCheckpointData({
+    required this.id,
+    required this.cycleId,
+    required this.kind,
+    required this.observedOn,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['cycle_id'] = Variable<int>(cycleId);
+    {
+      map['kind'] = Variable<String>(
+        $LifecycleCheckpointsTableTable.$converterkind.toSql(kind),
+      );
+    }
+    {
+      map['observed_on'] = Variable<String>(
+        $LifecycleCheckpointsTableTable.$converterobservedOn.toSql(observedOn),
+      );
+    }
+    return map;
+  }
+
+  LifecycleCheckpointsTableCompanion toCompanion(bool nullToAbsent) {
+    return LifecycleCheckpointsTableCompanion(
+      id: Value(id),
+      cycleId: Value(cycleId),
+      kind: Value(kind),
+      observedOn: Value(observedOn),
+    );
+  }
+
+  factory LifecycleCheckpointData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LifecycleCheckpointData(
+      id: serializer.fromJson<int>(json['id']),
+      cycleId: serializer.fromJson<int>(json['cycleId']),
+      kind: serializer.fromJson<LifecycleCheckpointKind>(json['kind']),
+      observedOn: serializer.fromJson<LocalDate>(json['observedOn']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'cycleId': serializer.toJson<int>(cycleId),
+      'kind': serializer.toJson<LifecycleCheckpointKind>(kind),
+      'observedOn': serializer.toJson<LocalDate>(observedOn),
+    };
+  }
+
+  LifecycleCheckpointData copyWith({
+    int? id,
+    int? cycleId,
+    LifecycleCheckpointKind? kind,
+    LocalDate? observedOn,
+  }) => LifecycleCheckpointData(
+    id: id ?? this.id,
+    cycleId: cycleId ?? this.cycleId,
+    kind: kind ?? this.kind,
+    observedOn: observedOn ?? this.observedOn,
+  );
+  LifecycleCheckpointData copyWithCompanion(
+    LifecycleCheckpointsTableCompanion data,
+  ) {
+    return LifecycleCheckpointData(
+      id: data.id.present ? data.id.value : this.id,
+      cycleId: data.cycleId.present ? data.cycleId.value : this.cycleId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      observedOn: data.observedOn.present
+          ? data.observedOn.value
+          : this.observedOn,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LifecycleCheckpointData(')
+          ..write('id: $id, ')
+          ..write('cycleId: $cycleId, ')
+          ..write('kind: $kind, ')
+          ..write('observedOn: $observedOn')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, cycleId, kind, observedOn);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LifecycleCheckpointData &&
+          other.id == this.id &&
+          other.cycleId == this.cycleId &&
+          other.kind == this.kind &&
+          other.observedOn == this.observedOn);
+}
+
+class LifecycleCheckpointsTableCompanion
+    extends UpdateCompanion<LifecycleCheckpointData> {
+  final Value<int> id;
+  final Value<int> cycleId;
+  final Value<LifecycleCheckpointKind> kind;
+  final Value<LocalDate> observedOn;
+  const LifecycleCheckpointsTableCompanion({
+    this.id = const Value.absent(),
+    this.cycleId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.observedOn = const Value.absent(),
+  });
+  LifecycleCheckpointsTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int cycleId,
+    required LifecycleCheckpointKind kind,
+    required LocalDate observedOn,
+  }) : cycleId = Value(cycleId),
+       kind = Value(kind),
+       observedOn = Value(observedOn);
+  static Insertable<LifecycleCheckpointData> custom({
+    Expression<int>? id,
+    Expression<int>? cycleId,
+    Expression<String>? kind,
+    Expression<String>? observedOn,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (cycleId != null) 'cycle_id': cycleId,
+      if (kind != null) 'kind': kind,
+      if (observedOn != null) 'observed_on': observedOn,
+    });
+  }
+
+  LifecycleCheckpointsTableCompanion copyWith({
+    Value<int>? id,
+    Value<int>? cycleId,
+    Value<LifecycleCheckpointKind>? kind,
+    Value<LocalDate>? observedOn,
+  }) {
+    return LifecycleCheckpointsTableCompanion(
+      id: id ?? this.id,
+      cycleId: cycleId ?? this.cycleId,
+      kind: kind ?? this.kind,
+      observedOn: observedOn ?? this.observedOn,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (cycleId.present) {
+      map['cycle_id'] = Variable<int>(cycleId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $LifecycleCheckpointsTableTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (observedOn.present) {
+      map['observed_on'] = Variable<String>(
+        $LifecycleCheckpointsTableTable.$converterobservedOn.toSql(
+          observedOn.value,
+        ),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LifecycleCheckpointsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('cycleId: $cycleId, ')
+          ..write('kind: $kind, ')
+          ..write('observedOn: $observedOn')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AreasTableTable areasTable = $AreasTableTable(this);
   late final $ItemsTableTable itemsTable = $ItemsTableTable(this);
+  late final $LifecycleCyclesTableTable lifecycleCyclesTable =
+      $LifecycleCyclesTableTable(this);
+  late final $LifecycleCheckpointsTableTable lifecycleCheckpointsTable =
+      $LifecycleCheckpointsTableTable(this);
   late final Index idxAreasNameActive = Index(
     'idx_areas_name_active',
     'CREATE UNIQUE INDEX idx_areas_name_active ON areas (LOWER(name)) WHERE is_archived = 0',
@@ -1205,6 +1845,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_items_status',
     'CREATE INDEX idx_items_status ON items (stock_status, is_archived)',
   );
+  late final Index idxLifecycleCyclesActive = Index(
+    'idx_lifecycle_cycles_active',
+    'CREATE UNIQUE INDEX idx_lifecycle_cycles_active ON lifecycle_cycles (item_id) WHERE finished_on IS NULL',
+  );
+  late final Index idxLifecycleCyclesHistory = Index(
+    'idx_lifecycle_cycles_history',
+    'CREATE INDEX idx_lifecycle_cycles_history ON lifecycle_cycles (item_id, started_on, id)',
+  );
+  late final Index idxLifecycleCheckpointsKind = Index(
+    'idx_lifecycle_checkpoints_kind',
+    'CREATE UNIQUE INDEX idx_lifecycle_checkpoints_kind ON lifecycle_checkpoints (cycle_id, kind)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1212,10 +1864,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     areasTable,
     itemsTable,
+    lifecycleCyclesTable,
+    lifecycleCheckpointsTable,
     idxAreasNameActive,
     idxAreasOrder,
     idxItemsArea,
     idxItemsStatus,
+    idxLifecycleCyclesActive,
+    idxLifecycleCyclesHistory,
+    idxLifecycleCheckpointsKind,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1225,6 +1882,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('items', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'items',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('lifecycle_cycles', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'lifecycle_cycles',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('lifecycle_checkpoints', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -1630,6 +2301,31 @@ final class $$ItemsTableTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<
+    $LifecycleCyclesTableTable,
+    List<LifecycleCycleData>
+  >
+  _lifecycleCyclesTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.lifecycleCyclesTable,
+        aliasName: 'items__id__lifecycle_cycles__item_id',
+      );
+
+  $$LifecycleCyclesTableTableProcessedTableManager
+  get lifecycleCyclesTableRefs {
+    final manager = $$LifecycleCyclesTableTableTableManager(
+      $_db,
+      $_db.lifecycleCyclesTable,
+    ).filter((f) => f.itemId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _lifecycleCyclesTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ItemsTableTableFilterComposer
@@ -1714,6 +2410,31 @@ class $$ItemsTableTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> lifecycleCyclesTableRefs(
+    Expression<bool> Function($$LifecycleCyclesTableTableFilterComposer f) f,
+  ) {
+    final $$LifecycleCyclesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.lifecycleCyclesTable,
+      getReferencedColumn: (t) => t.itemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LifecycleCyclesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.lifecycleCyclesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -1871,6 +2592,32 @@ class $$ItemsTableTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> lifecycleCyclesTableRefs<T extends Object>(
+    Expression<T> Function($$LifecycleCyclesTableTableAnnotationComposer a) f,
+  ) {
+    final $$LifecycleCyclesTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.lifecycleCyclesTable,
+          getReferencedColumn: (t) => t.itemId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LifecycleCyclesTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.lifecycleCyclesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ItemsTableTableTableManager
@@ -1886,7 +2633,7 @@ class $$ItemsTableTableTableManager
           $$ItemsTableTableUpdateCompanionBuilder,
           (ItemData, $$ItemsTableTableReferences),
           ItemData,
-          PrefetchHooks Function({bool areaId})
+          PrefetchHooks Function({bool areaId, bool lifecycleCyclesTableRefs})
         > {
   $$ItemsTableTableTableManager(_$AppDatabase db, $ItemsTableTable table)
     : super(
@@ -1959,7 +2706,781 @@ class $$ItemsTableTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({areaId = false}) {
+          prefetchHooksCallback:
+              ({areaId = false, lifecycleCyclesTableRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (lifecycleCyclesTableRefs) db.lifecycleCyclesTable,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (areaId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.areaId,
+                            referencedTable: $$ItemsTableTableReferences
+                                ._areaIdTable(db),
+                            referencedColumn: $$ItemsTableTableReferences
+                                ._areaIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (lifecycleCyclesTableRefs)
+                        await $_getPrefetchedData<
+                          ItemData,
+                          $ItemsTableTable,
+                          LifecycleCycleData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ItemsTableTableReferences
+                              ._lifecycleCyclesTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ItemsTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).lifecycleCyclesTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.itemId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ItemsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ItemsTableTable,
+      ItemData,
+      $$ItemsTableTableFilterComposer,
+      $$ItemsTableTableOrderingComposer,
+      $$ItemsTableTableAnnotationComposer,
+      $$ItemsTableTableCreateCompanionBuilder,
+      $$ItemsTableTableUpdateCompanionBuilder,
+      (ItemData, $$ItemsTableTableReferences),
+      ItemData,
+      PrefetchHooks Function({bool areaId, bool lifecycleCyclesTableRefs})
+    >;
+typedef $$LifecycleCyclesTableTableCreateCompanionBuilder =
+    LifecycleCyclesTableCompanion Function({
+      Value<int> id,
+      required int itemId,
+      required LocalDate startedOn,
+      Value<LocalDate?> finishedOn,
+    });
+typedef $$LifecycleCyclesTableTableUpdateCompanionBuilder =
+    LifecycleCyclesTableCompanion Function({
+      Value<int> id,
+      Value<int> itemId,
+      Value<LocalDate> startedOn,
+      Value<LocalDate?> finishedOn,
+    });
+
+final class $$LifecycleCyclesTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $LifecycleCyclesTableTable,
+          LifecycleCycleData
+        > {
+  $$LifecycleCyclesTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ItemsTableTable _itemIdTable(_$AppDatabase db) =>
+      db.itemsTable.createAlias('lifecycle_cycles__item_id__items__id');
+
+  $$ItemsTableTableProcessedTableManager get itemId {
+    final $_column = $_itemColumn<int>('item_id')!;
+
+    final manager = $$ItemsTableTableTableManager(
+      $_db,
+      $_db.itemsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_itemIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $LifecycleCheckpointsTableTable,
+    List<LifecycleCheckpointData>
+  >
+  _lifecycleCheckpointsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.lifecycleCheckpointsTable,
+        aliasName: 'lifecycle_cycles__id__lifecycle_checkpoints__cycle_id',
+      );
+
+  $$LifecycleCheckpointsTableTableProcessedTableManager
+  get lifecycleCheckpointsTableRefs {
+    final manager = $$LifecycleCheckpointsTableTableTableManager(
+      $_db,
+      $_db.lifecycleCheckpointsTable,
+    ).filter((f) => f.cycleId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _lifecycleCheckpointsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$LifecycleCyclesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LifecycleCyclesTableTable> {
+  $$LifecycleCyclesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalDate, LocalDate, String> get startedOn =>
+      $composableBuilder(
+        column: $table.startedOn,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnWithTypeConverterFilters<LocalDate?, LocalDate, String>
+  get finishedOn => $composableBuilder(
+    column: $table.finishedOn,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  $$ItemsTableTableFilterComposer get itemId {
+    final $$ItemsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.itemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ItemsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.itemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> lifecycleCheckpointsTableRefs(
+    Expression<bool> Function($$LifecycleCheckpointsTableTableFilterComposer f)
+    f,
+  ) {
+    final $$LifecycleCheckpointsTableTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.lifecycleCheckpointsTable,
+          getReferencedColumn: (t) => t.cycleId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LifecycleCheckpointsTableTableFilterComposer(
+                $db: $db,
+                $table: $db.lifecycleCheckpointsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$LifecycleCyclesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LifecycleCyclesTableTable> {
+  $$LifecycleCyclesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get startedOn => $composableBuilder(
+    column: $table.startedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get finishedOn => $composableBuilder(
+    column: $table.finishedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ItemsTableTableOrderingComposer get itemId {
+    final $$ItemsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.itemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ItemsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.itemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LifecycleCyclesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LifecycleCyclesTableTable> {
+  $$LifecycleCyclesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalDate, String> get startedOn =>
+      $composableBuilder(column: $table.startedOn, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalDate?, String> get finishedOn =>
+      $composableBuilder(
+        column: $table.finishedOn,
+        builder: (column) => column,
+      );
+
+  $$ItemsTableTableAnnotationComposer get itemId {
+    final $$ItemsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.itemsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ItemsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.itemsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> lifecycleCheckpointsTableRefs<T extends Object>(
+    Expression<T> Function($$LifecycleCheckpointsTableTableAnnotationComposer a)
+    f,
+  ) {
+    final $$LifecycleCheckpointsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.lifecycleCheckpointsTable,
+          getReferencedColumn: (t) => t.cycleId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LifecycleCheckpointsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.lifecycleCheckpointsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$LifecycleCyclesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LifecycleCyclesTableTable,
+          LifecycleCycleData,
+          $$LifecycleCyclesTableTableFilterComposer,
+          $$LifecycleCyclesTableTableOrderingComposer,
+          $$LifecycleCyclesTableTableAnnotationComposer,
+          $$LifecycleCyclesTableTableCreateCompanionBuilder,
+          $$LifecycleCyclesTableTableUpdateCompanionBuilder,
+          (LifecycleCycleData, $$LifecycleCyclesTableTableReferences),
+          LifecycleCycleData,
+          PrefetchHooks Function({
+            bool itemId,
+            bool lifecycleCheckpointsTableRefs,
+          })
+        > {
+  $$LifecycleCyclesTableTableTableManager(
+    _$AppDatabase db,
+    $LifecycleCyclesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LifecycleCyclesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LifecycleCyclesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LifecycleCyclesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> itemId = const Value.absent(),
+                Value<LocalDate> startedOn = const Value.absent(),
+                Value<LocalDate?> finishedOn = const Value.absent(),
+              }) => LifecycleCyclesTableCompanion(
+                id: id,
+                itemId: itemId,
+                startedOn: startedOn,
+                finishedOn: finishedOn,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int itemId,
+                required LocalDate startedOn,
+                Value<LocalDate?> finishedOn = const Value.absent(),
+              }) => LifecycleCyclesTableCompanion.insert(
+                id: id,
+                itemId: itemId,
+                startedOn: startedOn,
+                finishedOn: finishedOn,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LifecycleCyclesTableTable, LifecycleCycleData>(
+                    table,
+                  ),
+                  $$LifecycleCyclesTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({itemId = false, lifecycleCheckpointsTableRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (lifecycleCheckpointsTableRefs)
+                      db.lifecycleCheckpointsTable,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (itemId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.itemId,
+                            referencedTable:
+                                $$LifecycleCyclesTableTableReferences
+                                    ._itemIdTable(db),
+                            referencedColumn:
+                                $$LifecycleCyclesTableTableReferences
+                                    ._itemIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (lifecycleCheckpointsTableRefs)
+                        await $_getPrefetchedData<
+                          LifecycleCycleData,
+                          $LifecycleCyclesTableTable,
+                          LifecycleCheckpointData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$LifecycleCyclesTableTableReferences
+                              ._lifecycleCheckpointsTableRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$LifecycleCyclesTableTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).lifecycleCheckpointsTableRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.cycleId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$LifecycleCyclesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LifecycleCyclesTableTable,
+      LifecycleCycleData,
+      $$LifecycleCyclesTableTableFilterComposer,
+      $$LifecycleCyclesTableTableOrderingComposer,
+      $$LifecycleCyclesTableTableAnnotationComposer,
+      $$LifecycleCyclesTableTableCreateCompanionBuilder,
+      $$LifecycleCyclesTableTableUpdateCompanionBuilder,
+      (LifecycleCycleData, $$LifecycleCyclesTableTableReferences),
+      LifecycleCycleData,
+      PrefetchHooks Function({bool itemId, bool lifecycleCheckpointsTableRefs})
+    >;
+typedef $$LifecycleCheckpointsTableTableCreateCompanionBuilder =
+    LifecycleCheckpointsTableCompanion Function({
+      Value<int> id,
+      required int cycleId,
+      required LifecycleCheckpointKind kind,
+      required LocalDate observedOn,
+    });
+typedef $$LifecycleCheckpointsTableTableUpdateCompanionBuilder =
+    LifecycleCheckpointsTableCompanion Function({
+      Value<int> id,
+      Value<int> cycleId,
+      Value<LifecycleCheckpointKind> kind,
+      Value<LocalDate> observedOn,
+    });
+
+final class $$LifecycleCheckpointsTableTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $LifecycleCheckpointsTableTable,
+          LifecycleCheckpointData
+        > {
+  $$LifecycleCheckpointsTableTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LifecycleCyclesTableTable _cycleIdTable(_$AppDatabase db) => db
+      .lifecycleCyclesTable
+      .createAlias('lifecycle_checkpoints__cycle_id__lifecycle_cycles__id');
+
+  $$LifecycleCyclesTableTableProcessedTableManager get cycleId {
+    final $_column = $_itemColumn<int>('cycle_id')!;
+
+    final manager = $$LifecycleCyclesTableTableTableManager(
+      $_db,
+      $_db.lifecycleCyclesTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cycleIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LifecycleCheckpointsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LifecycleCheckpointsTableTable> {
+  $$LifecycleCheckpointsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LifecycleCheckpointKind,
+    LifecycleCheckpointKind,
+    String
+  >
+  get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalDate, LocalDate, String> get observedOn =>
+      $composableBuilder(
+        column: $table.observedOn,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  $$LifecycleCyclesTableTableFilterComposer get cycleId {
+    final $$LifecycleCyclesTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cycleId,
+      referencedTable: $db.lifecycleCyclesTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LifecycleCyclesTableTableFilterComposer(
+            $db: $db,
+            $table: $db.lifecycleCyclesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LifecycleCheckpointsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LifecycleCheckpointsTableTable> {
+  $$LifecycleCheckpointsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get observedOn => $composableBuilder(
+    column: $table.observedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LifecycleCyclesTableTableOrderingComposer get cycleId {
+    final $$LifecycleCyclesTableTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.cycleId,
+          referencedTable: $db.lifecycleCyclesTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LifecycleCyclesTableTableOrderingComposer(
+                $db: $db,
+                $table: $db.lifecycleCyclesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$LifecycleCheckpointsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LifecycleCheckpointsTableTable> {
+  $$LifecycleCheckpointsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LifecycleCheckpointKind, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalDate, String> get observedOn =>
+      $composableBuilder(
+        column: $table.observedOn,
+        builder: (column) => column,
+      );
+
+  $$LifecycleCyclesTableTableAnnotationComposer get cycleId {
+    final $$LifecycleCyclesTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.cycleId,
+          referencedTable: $db.lifecycleCyclesTable,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LifecycleCyclesTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.lifecycleCyclesTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$LifecycleCheckpointsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LifecycleCheckpointsTableTable,
+          LifecycleCheckpointData,
+          $$LifecycleCheckpointsTableTableFilterComposer,
+          $$LifecycleCheckpointsTableTableOrderingComposer,
+          $$LifecycleCheckpointsTableTableAnnotationComposer,
+          $$LifecycleCheckpointsTableTableCreateCompanionBuilder,
+          $$LifecycleCheckpointsTableTableUpdateCompanionBuilder,
+          (LifecycleCheckpointData, $$LifecycleCheckpointsTableTableReferences),
+          LifecycleCheckpointData,
+          PrefetchHooks Function({bool cycleId})
+        > {
+  $$LifecycleCheckpointsTableTableTableManager(
+    _$AppDatabase db,
+    $LifecycleCheckpointsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LifecycleCheckpointsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$LifecycleCheckpointsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LifecycleCheckpointsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> cycleId = const Value.absent(),
+                Value<LifecycleCheckpointKind> kind = const Value.absent(),
+                Value<LocalDate> observedOn = const Value.absent(),
+              }) => LifecycleCheckpointsTableCompanion(
+                id: id,
+                cycleId: cycleId,
+                kind: kind,
+                observedOn: observedOn,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int cycleId,
+                required LifecycleCheckpointKind kind,
+                required LocalDate observedOn,
+              }) => LifecycleCheckpointsTableCompanion.insert(
+                id: id,
+                cycleId: cycleId,
+                kind: kind,
+                observedOn: observedOn,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $LifecycleCheckpointsTableTable,
+                    LifecycleCheckpointData
+                  >(table),
+                  $$LifecycleCheckpointsTableTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({cycleId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -1979,15 +3500,17 @@ class $$ItemsTableTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (areaId) {
+                    if (cycleId) {
                       state = state.withJoin(
                         currentTable: table,
-                        currentColumn: table.areaId,
-                        referencedTable: $$ItemsTableTableReferences
-                            ._areaIdTable(db),
-                        referencedColumn: $$ItemsTableTableReferences
-                            ._areaIdTable(db)
-                            .id,
+                        currentColumn: table.cycleId,
+                        referencedTable:
+                            $$LifecycleCheckpointsTableTableReferences
+                                ._cycleIdTable(db),
+                        referencedColumn:
+                            $$LifecycleCheckpointsTableTableReferences
+                                ._cycleIdTable(db)
+                                .id,
                       ) as T;
                     }
 
@@ -2002,19 +3525,19 @@ class $$ItemsTableTableTableManager
       );
 }
 
-typedef $$ItemsTableTableProcessedTableManager =
+typedef $$LifecycleCheckpointsTableTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $ItemsTableTable,
-      ItemData,
-      $$ItemsTableTableFilterComposer,
-      $$ItemsTableTableOrderingComposer,
-      $$ItemsTableTableAnnotationComposer,
-      $$ItemsTableTableCreateCompanionBuilder,
-      $$ItemsTableTableUpdateCompanionBuilder,
-      (ItemData, $$ItemsTableTableReferences),
-      ItemData,
-      PrefetchHooks Function({bool areaId})
+      $LifecycleCheckpointsTableTable,
+      LifecycleCheckpointData,
+      $$LifecycleCheckpointsTableTableFilterComposer,
+      $$LifecycleCheckpointsTableTableOrderingComposer,
+      $$LifecycleCheckpointsTableTableAnnotationComposer,
+      $$LifecycleCheckpointsTableTableCreateCompanionBuilder,
+      $$LifecycleCheckpointsTableTableUpdateCompanionBuilder,
+      (LifecycleCheckpointData, $$LifecycleCheckpointsTableTableReferences),
+      LifecycleCheckpointData,
+      PrefetchHooks Function({bool cycleId})
     >;
 
 class $AppDatabaseManager {
@@ -2024,4 +3547,11 @@ class $AppDatabaseManager {
       $$AreasTableTableTableManager(_db, _db.areasTable);
   $$ItemsTableTableTableManager get itemsTable =>
       $$ItemsTableTableTableManager(_db, _db.itemsTable);
+  $$LifecycleCyclesTableTableTableManager get lifecycleCyclesTable =>
+      $$LifecycleCyclesTableTableTableManager(_db, _db.lifecycleCyclesTable);
+  $$LifecycleCheckpointsTableTableTableManager get lifecycleCheckpointsTable =>
+      $$LifecycleCheckpointsTableTableTableManager(
+        _db,
+        _db.lifecycleCheckpointsTable,
+      );
 }

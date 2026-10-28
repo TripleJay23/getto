@@ -134,7 +134,7 @@ void main() {
       },
     );
     test(
-      'four-area seed preserves an existing six-area schema v1 household',
+      'four-area seed preserves an existing six-area household on reopen',
       () async {
         var db = AppDatabase(NativeDatabase(dbFile));
         await db.select(db.areasTable).get();
@@ -188,7 +188,7 @@ void main() {
 
         db = AppDatabase(NativeDatabase(dbFile));
         try {
-          expect(db.schemaVersion, 1);
+          expect(db.schemaVersion, 2);
           expect(await db.select(db.areasTable).get(), areasBefore);
           expect(await db.select(db.itemsTable).get(), itemsBefore);
         } finally {
