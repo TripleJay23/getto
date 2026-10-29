@@ -33,6 +33,7 @@ flutter:
     - assets/figma/m231/
     - assets/figma/m232/
     - assets/figma/m233/
+    - assets/figma/m304/
   fonts:
     - family: Manrope
       fonts:

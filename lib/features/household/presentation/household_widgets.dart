@@ -10,12 +10,14 @@ class HouseholdAction extends StatelessWidget {
     this.label, {
     required this.onPressed,
     this.secondary = false,
+    this.destructive = false,
     this.minimumHeight,
     super.key,
   });
   final String label;
   final VoidCallback? onPressed;
   final bool secondary;
+  final bool destructive;
   final double? minimumHeight;
 
   @override
@@ -32,6 +34,8 @@ class HouseholdAction extends StatelessWidget {
       textStyle: GettoTypography.labelLarge,
       backgroundColor: secondary
           ? const Color(0xFFF2F8F5)
+          : destructive
+          ? GettoColors.error
           : GettoColors.actionPrimary,
       foregroundColor: secondary ? GettoColors.textBrand : GettoColors.surface,
       disabledBackgroundColor: const Color(0xFFE5E8E6),

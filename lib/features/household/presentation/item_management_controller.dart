@@ -21,6 +21,7 @@ class ItemManagementController extends ChangeNotifier {
   String unit;
   bool busy = false;
   bool conflict = false;
+  int? activeCycleId;
   String? error;
   bool _disposed = false;
 
@@ -34,13 +35,18 @@ class ItemManagementController extends ChangeNotifier {
     busy = true;
     error = null;
     conflict = false;
+    activeCycleId = null;
     notifyListeners();
     try {
       final result = await command();
       if (result.isFailure) {
         final failure = result.failureOrNull;
         conflict = failure is StaleItemFailure;
+        activeCycleId = failure is ActiveLifecycleResolutionFailure
+            ? failure.cycleId
+            : null;
         error = switch (failure) {
+          ActiveLifecycleResolutionFailure() => 'An observation is still active. Resolve it explicitly before recording zero stock. Your entry is still here.',
           ItemArchivedFailure() => 'This item is archived. Restore it before editing or correcting availability. Your entry is still here.',
           StaleItemFailure() => 'Saved details changed. Your edits are still here. Review saved details before retrying.',
           EntityNotFoundFailure() =>
@@ -85,6 +91,14 @@ class ItemManagementController extends ChangeNotifier {
     expected = latest;
     conflict = false;
     error = 'Latest saved details reviewed. Your draft is retained; save when ready.';
+    notifyListeners();
+  }
+
+  void reviewAvailability(Item latest) {
+    if (busy) return;
+    expected = latest;
+    activeCycleId = null;
+    error = 'The observation was resolved. Your availability entry has not been saved yet; review and save it when ready.';
     notifyListeners();
   }
 

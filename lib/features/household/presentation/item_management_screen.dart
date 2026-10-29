@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/composition/household_providers.dart';
+import '../../../app/composition/lifecycle_providers.dart';
+import '../../../core/domain/result/failure.dart';
 import '../../../design_system/components/getto_count_stepper.dart';
 import '../../../design_system/components/getto_item_row.dart';
 import '../../../design_system/components/getto_screen_artwork.dart';
@@ -14,13 +16,17 @@ import '../../../design_system/typography/getto_typography.dart';
 import '../domain/area.dart';
 import '../domain/behavior_profile.dart';
 import '../domain/item.dart';
+import '../domain/item_lifecycle.dart';
 import '../domain/stock_status.dart';
 import 'household_widgets.dart';
 import 'item_management_controller.dart';
+import 'lifecycle_controller.dart';
+import 'lifecycle_detail.dart';
+import 'lifecycle_task_sheet.dart';
 
-void _back(BuildContext context) {
+void _back(BuildContext context, [Object? result]) {
   if (context.canPop()) {
-    context.pop();
+    context.pop(result);
   } else {
     context.go('/home');
   }
@@ -51,11 +57,18 @@ Widget _label(String label, Widget child) => Column(
 
 /// Growing child app bar and scrollable body, within the existing Home branch.
 class _ItemPage extends StatelessWidget {
-  const _ItemPage(this.title, this.children, {this.busy = false, this.more});
+  const _ItemPage(
+    this.title,
+    this.children, {
+    this.busy = false,
+    this.more,
+    this.scrollController,
+  });
   final String title;
   final List<Widget> children;
   final bool busy;
   final Widget? more;
+  final ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context) => PopScope(
@@ -97,6 +110,7 @@ class _ItemPage extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView(
+                    controller: scrollController,
                     padding: const EdgeInsets.fromLTRB(28, 20, 28, 36),
                     children: [
                       for (final child in children) ...[
@@ -149,6 +163,45 @@ class _ItemRecord extends ConsumerWidget {
       );
 }
 
+/// Detail facts come from one committed aggregate query across all owned tables.
+class _LifecycleItemRecord extends ConsumerWidget {
+  const _LifecycleItemRecord(this.id, {required this.builder});
+  final int id;
+  final Widget Function(ItemLifecycle) builder;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => ref
+      .watch(lifecycleAggregateProvider(id))
+      .when(
+        skipLoadingOnRefresh: false,
+        loading: () =>
+            const _ItemPage('Item', [HouseholdMessage('Loading saved item…')]),
+        error: (_, _) => failure(context, ref),
+        data: (result) => result.isSuccess
+            ? builder(result.valueOrNull!)
+            : result.failureOrNull is EntityNotFoundFailure
+            ? _ItemPage('Item unavailable', [
+                const HouseholdMessage(
+                  'This item was deleted or is no longer available.',
+                ),
+                HouseholdAction(
+                  'Return to Home',
+                  onPressed: () => context.go('/home'),
+                ),
+              ])
+            : failure(context, ref),
+      );
+  Widget failure(BuildContext context, WidgetRef ref) => _ItemPage('Item', [
+    const HouseholdMessage(
+      "Couldn't load this item. Your saved data has not been reset.",
+      error: true,
+    ),
+    HouseholdAction(
+      'Retry',
+      onPressed: () => ref.invalidate(lifecycleAggregateProvider(id)),
+    ),
+  ]);
+}
+
 String _behavior(Item item) => switch (item.behaviorProfile) {
   BehaviorProfile.replenishable => 'Single-unit replenishable',
   BehaviorProfile.countableReplenishable => 'Countable replenishable',
@@ -170,6 +223,25 @@ class ItemDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ItemDetailScreenState extends ConsumerState<ItemDetailScreen> {
+  final scroll = ScrollController();
+  @override
+  void dispose() {
+    scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> edit(Item reviewed) async {
+    final edited = await context.push<(String, int, String?)>(
+      '/home/items/${widget.itemId}/edit',
+    );
+    if (!mounted || !scroll.hasClients || edited == null) return;
+    if (edited.$1 != reviewed.name ||
+        edited.$2 != reviewed.areaId ||
+        edited.$3 != reviewed.unit) {
+      scroll.jumpTo(0);
+    }
+  }
+
   bool modalOpen = false;
   Future<void> command(Item item, _Command command) async {
     if (modalOpen) return;
@@ -208,9 +280,10 @@ class _ItemDetailScreenState extends ConsumerState<ItemDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => _ItemRecord(
+  Widget build(BuildContext context) => _LifecycleItemRecord(
     widget.itemId,
-    builder: (item) {
+    builder: (aggregate) {
+      final item = aggregate.item;
       final areas = ref.watch(allAreasStreamProvider);
       return _ItemPage(
         'Item',
@@ -256,28 +329,58 @@ class _ItemDetailScreenState extends ConsumerState<ItemDetailScreen> {
             const HouseholdMessage(
               'Restore this item to edit its details or correct availability.',
             ),
+          if (item.isArchived)
+            HouseholdAction(
+              'Restore item',
+              onPressed: () => command(item, _Command.restore),
+            ),
+          if (item.behaviorProfile != BehaviorProfile.durable)
+            LifecycleDetail(aggregate: aggregate),
           if (!item.isArchived) ...[
             HouseholdAction(
               'Edit or move',
-              onPressed: () => context.push('/home/items/${item.id}/edit'),
+              secondary: item.behaviorProfile != BehaviorProfile.durable,
+              onPressed: () => edit(item),
             ),
             HouseholdAction(
               item.behaviorProfile == BehaviorProfile.countableReplenishable
                   ? 'Set current count'
                   : 'Correct presence',
               secondary: true,
-              onPressed: () => command(item, _Command.correct),
+              onPressed: () async {
+                if (item.behaviorProfile ==
+                        BehaviorProfile.countableReplenishable &&
+                    aggregate.activeCycle != null) {
+                  if (modalOpen) return;
+                  modalOpen = true;
+                  try {
+                    final outcome = await showLifecycleTask(
+                      context,
+                      initial: aggregate,
+                      task: LifecycleTask.correctCount,
+                    );
+                    if (context.mounted && outcome != null) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(outcome.message)));
+                    }
+                  } finally {
+                    modalOpen = false;
+                  }
+                } else {
+                  await command(item, _Command.correct);
+                }
+              },
             ),
           ],
-          HouseholdAction(
-            item.isArchived ? 'Restore item' : 'Archive item',
-            secondary: !item.isArchived,
-            onPressed: () => command(
-              item,
-              item.isArchived ? _Command.restore : _Command.archive,
+          if (!item.isArchived)
+            HouseholdAction(
+              'Archive item',
+              secondary: true,
+              onPressed: () => command(item, _Command.archive),
             ),
-          ),
         ],
+        scrollController: scroll,
         more: PopupMenuButton<String>(
           tooltip: 'Item options',
           icon: const SizedBox.square(
@@ -503,7 +606,13 @@ class _EditFormState extends ConsumerState<_EditForm> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Item details saved.')),
                     );
-                    _back(context);
+                    _back(context, (
+                      controller.name.trim(),
+                      controller.areaId,
+                      controller.unit.trim().isEmpty
+                          ? null
+                          : controller.unit.trim(),
+                    ));
                   },
           ),
           HouseholdAction(
@@ -531,6 +640,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
   late final ItemManagementController controller;
   late final TextEditingController count;
   StockStatus? presence;
+  bool resolving = false;
   @override
   void initState() {
     super.initState();
@@ -550,10 +660,44 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
     super.dispose();
   }
 
+  Future<void> resolveActive() async {
+    if (resolving || controller.busy) return;
+    setState(() => resolving = true);
+    try {
+      final result = await ref
+          .read(lifecycleRepositoryProvider)
+          .getLifecycle(widget.item.id);
+      if (!mounted) return;
+      if (result.isFailure) {
+        controller.error = 'Could not review the active observation. Your entry is still here.';
+        return;
+      }
+      final latest = result.valueOrNull!;
+      if (latest.activeCycle == null) {
+        controller.reviewAvailability(latest.item);
+        return;
+      }
+      final outcome = await showLifecycleTask(
+        context,
+        initial: latest,
+        task: LifecycleTask.resolveAvailability,
+      );
+      if (!mounted || outcome == null) return;
+      if (outcome.availabilityResolved) {
+        Navigator.of(context).pop(true);
+      } else {
+        controller.reviewAvailability(outcome.committed.item);
+      }
+    } finally {
+      if (mounted) setState(() => resolving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) {
+      final working = controller.busy || resolving;
       final correcting = widget.command == _Command.correct;
       final current = ref
           .watch(itemStreamProvider(widget.item.id))
@@ -608,7 +752,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
               switch (widget.command) {
                 _Command.archive => 'Archived items leave Home and search, but remain saved. You can restore them later.',
                 _Command.restore => 'The item returns to Home in its currently saved area, with its saved details. Items in archived areas remain visible in All.',
-                _Command.delete => 'This permanently deletes the item and its saved details. This cannot be undone.',
+                _Command.delete => 'This permanently deletes the item, its saved details and its lifecycle observations. This cannot be undone.',
                 _Command.correct =>
                   'Set what is true now for ${widget.item.name}. This only corrects saved availability${countable ? ' and count' : ''}.',
               },
@@ -631,7 +775,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                   TextField(
                     key: const Key('correction-count'),
                     controller: count,
-                    enabled: !controller.busy && !readOnly,
+                    enabled: !working && !readOnly,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: _field(
@@ -649,7 +793,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                       child: GettoCountStepper(
                         value: value,
                         maximum: 9223372036854775807,
-                        onChanged: controller.busy || readOnly
+                        onChanged: working || readOnly
                             ? null
                             : (v) => setState(() => count.text = '$v'),
                       ),
@@ -659,7 +803,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                 HouseholdAction(
                   'In home',
                   secondary: presence != StockStatus.inStock,
-                  onPressed: controller.busy || readOnly
+                  onPressed: working || readOnly
                       ? null
                       : () => setState(() => presence = StockStatus.inStock),
                 ),
@@ -667,7 +811,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                 HouseholdAction(
                   'Not at home',
                   secondary: presence != StockStatus.outOfStock,
-                  onPressed: controller.busy || readOnly
+                  onPressed: working || readOnly
                       ? null
                       : () => setState(() => presence = StockStatus.outOfStock),
                 ),
@@ -676,6 +820,14 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
             if (controller.error != null) ...[
               const SizedBox(height: 13),
               HouseholdMessage(controller.error!, error: true),
+            ],
+            if (controller.activeCycleId != null) ...[
+              const SizedBox(height: 12),
+              HouseholdAction(
+                'Resolve active observation',
+                secondary: true,
+                onPressed: working ? null : resolveActive,
+              ),
             ],
             const SizedBox(height: 20),
             FilledButton(
@@ -693,7 +845,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                 ),
               ),
               onPressed:
-                  controller.busy ||
+                  working ||
                       readOnly ||
                       (correcting &&
                           (countable
@@ -715,7 +867,9 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
                       }
                     },
               child: Text(
-                controller.busy
+                resolving
+                    ? 'Reviewing…'
+                    : working
                     ? 'Saving…'
                     : switch (widget.command) {
                         _Command.archive => 'Archive item',
@@ -732,7 +886,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
               'Cancel',
               secondary: true,
               minimumHeight: 48,
-              onPressed: controller.busy
+              onPressed: working
                   ? null
                   : () => Navigator.of(context).pop(false),
             ),
@@ -740,7 +894,7 @@ class _ItemCommandFormState extends ConsumerState<_ItemCommandForm> {
         ),
       );
       return PopScope(
-        canPop: !controller.busy,
+        canPop: !working,
         child: correcting
             ? Padding(
                 padding: EdgeInsets.only(
