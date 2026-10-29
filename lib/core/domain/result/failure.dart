@@ -134,3 +134,13 @@ class LifecycleCheckpointReconciliationFailure extends LifecycleFailure {
 
   final List<int> checkpointIds;
 }
+
+/// Existing item-stock API requires an explicit lifecycle resolution before Out.
+/// This DataFailure preserves the established M2 repository return contract.
+class ActiveLifecycleResolutionFailure extends DataFailure {
+  const ActiveLifecycleResolutionFailure(this.cycleId)
+    : super(
+        'Resolve the active cycle with Finish or erroneous-cycle removal before recording zero stock.',
+      );
+  final int cycleId;
+}

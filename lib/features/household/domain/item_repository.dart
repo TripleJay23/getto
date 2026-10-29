@@ -81,6 +81,7 @@ abstract interface class ItemRepository {
   /// - `newPackageCount > 0` strictly mandates [StockStatus.inStock].
   /// - `newPackageCount == 0` strictly mandates [StockStatus.outOfStock].
   /// - Durable items reject package counts.
+  /// - Zero while a cycle is active returns [ActiveLifecycleResolutionFailure].
   /// [requireActive] checks archival state inside the write transaction.
   Future<Result<Item, DataFailure>> updatePackageCount({
     required int itemId,
@@ -89,6 +90,7 @@ abstract interface class ItemRepository {
   });
 
   /// Updates stock status:
+  /// - Out while a cycle is active returns [ActiveLifecycleResolutionFailure].
   /// - For countable items, setting [StockStatus.outOfStock] reconciles package count to 0.
   /// - For countable items, setting [StockStatus.inStock] with 0 or null count reconciles package count to 1.
   /// [requireActive] checks archival state inside the write transaction.

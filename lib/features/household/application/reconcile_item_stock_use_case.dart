@@ -5,6 +5,8 @@ import '../domain/item_repository.dart';
 import '../domain/stock_status.dart';
 
 /// Application use case enforcing approved factual stock status and package count reconciliation rules (M2-D07).
+/// Active-cycle resolution conflicts propagate unchanged from the transactional
+/// repository guard. No lifecycle is implicitly closed by these M2 commands.
 class ReconcileItemStockUseCase {
   const ReconcileItemStockUseCase(this._itemRepository);
 

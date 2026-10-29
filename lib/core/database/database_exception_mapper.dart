@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart' show DriftRemoteException;
 import 'package:sqlite3/sqlite3.dart';
 
 import '../domain/result/failure.dart';
@@ -6,9 +7,18 @@ import '../domain/result/failure.dart';
 /// Maps SQLite and Drift exceptions into typed, actionable [DataFailure] instances.
 /// Ensures no sensitive household data or unstructured SQL dumps leak across layers.
 DataFailure mapDatabaseException(Object error, [StackTrace? stackTrace]) {
-  final Object actual = error is DriftWrappedException
-      ? (error.cause ?? error)
-      : error;
+  Object actual = error;
+  // NativeDatabase.createInBackground transports the original SQLite error.
+  // Unwrap structured causes only; never inspect/log remote SQL or stack text.
+  for (var depth = 0; depth < 8; depth++) {
+    if (actual is DriftWrappedException && actual.cause != null) {
+      actual = actual.cause!;
+    } else if (actual is DriftRemoteException) {
+      actual = actual.remoteCause;
+    } else {
+      break;
+    }
+  }
 
   if (actual is SqliteException) {
     final message = actual.message.toLowerCase();
@@ -39,6 +49,7 @@ DataFailure mapDatabaseException(Object error, [StackTrace? stackTrace]) {
 
     // Check constraint violations
     if (extendedCode == 275 ||
+        extendedCode == 1811 ||
         extendedCode == 1299 ||
         message.contains('check constraint')) {
       return CheckConstraintFailure(

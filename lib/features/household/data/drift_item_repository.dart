@@ -29,6 +29,16 @@ class DriftItemRepository implements ItemRepository {
     updatedAt: data.updatedAt,
   );
 
+  Future<ActiveLifecycleResolutionFailure?> _activeCycleResolution(
+    int itemId,
+  ) async {
+    final active =
+        await (_db.select(_db.lifecycleCyclesTable)
+              ..where((t) => t.itemId.equals(itemId) & t.finishedOn.isNull()))
+            .getSingleOrNull();
+    return active == null ? null : ActiveLifecycleResolutionFailure(active.id);
+  }
+
   @override
   Future<Result<Item, DataFailure>> getItemById(int id) async {
     try {
@@ -171,6 +181,27 @@ class DriftItemRepository implements ItemRepository {
           return Result.failure(
             EntityNotFoundFailure('Item with ID ${item.id} was not found'),
           );
+        }
+
+        if (item.stockStatus == StockStatus.outOfStock ||
+            item.packageCount == 0) {
+          final resolution = await _activeCycleResolution(item.id);
+          if (resolution != null) return Result.failure(resolution);
+        }
+        if (item.behaviorProfile == BehaviorProfile.durable &&
+            existing.behaviorProfile != BehaviorProfile.durable) {
+          final history =
+              await (_db.select(_db.lifecycleCyclesTable)
+                    ..where((t) => t.itemId.equals(item.id))
+                    ..limit(1))
+                  .getSingleOrNull();
+          if (history != null) {
+            return const Result.failure(
+              CheckConstraintFailure(
+                'Resolve lifecycle evidence before changing to a durable possession.',
+              ),
+            );
+          }
         }
 
         final now = DateTime.now().toUtc();
@@ -394,6 +425,11 @@ class DriftItemRepository implements ItemRepository {
           );
         }
 
+        if (newPackageCount == 0) {
+          final resolution = await _activeCycleResolution(itemId);
+          if (resolution != null) return Result.failure(resolution);
+        }
+
         // Reconcile factual stock status per M2-D07
         final reconciledStatus = newPackageCount > 0
             ? StockStatus.inStock
@@ -444,6 +480,10 @@ class DriftItemRepository implements ItemRepository {
               'Restore the item before correcting availability.',
             ),
           );
+        }
+        if (newStatus == StockStatus.outOfStock) {
+          final resolution = await _activeCycleResolution(itemId);
+          if (resolution != null) return Result.failure(resolution);
         }
         int? reconciledCount = existing.packageCount;
 
